@@ -1,0 +1,152 @@
+{% extends 'admin/base_site.html' %}
+
+{% block content %}
+    <style>
+        .drop-container {
+          position: relative;
+          display: flex;
+          gap: 10px;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          height: 200px;
+          padding: 20px;
+          border-radius: 10px;
+          border: 2px dashed #555;
+          color: #444;
+          cursor: pointer;
+          transition: background .2s ease-in-out, border .2s ease-in-out;
+        }
+
+        .drop-container:hover {
+          background: #eee;
+          border-color: #111;
+        }
+
+        .drop-container:hover .drop-title {
+          color: #222;
+        }
+
+        .drop-title {
+          color: #444;
+          font-size: 20px;
+          font-weight: bold;
+          text-align: center;
+          transition: color .2s ease-in-out;
+        }
+
+        input[type=file]::file-selector-button {
+          margin-right: 20px;
+          border: none;
+          background: #084cdf;
+          padding: 10px 20px;
+          border-radius: 10px;
+          color: #fff;
+          cursor: pointer;
+          transition: background .2s ease-in-out;
+        }
+
+        input[type=file]::file-selector-button:hover {
+          background: #0d45a5;
+        }
+
+        .drop-container.drag-active {
+          background: #eee;
+          border-color: #111;
+        }
+
+        .drop-container.drag-active .drop-title {
+          color: #222;
+        }
+
+        .button-22 {
+          align-items: center;
+          appearance: button;
+          background-color: #0276FF;
+          border-radius: 8px;
+          border-style: none;
+          box-shadow: rgba(255, 255, 255, 0.26) 0 1px 2px inset;
+          box-sizing: border-box;
+          color: #fff;
+          cursor: pointer;
+          display: flex;
+          flex-direction: row;
+          flex-shrink: 0;
+          font-family: "RM Neue",sans-serif;
+          font-size: 100%;
+          line-height: 1.15;
+          margin: 0;
+          padding: 10px 21px;
+          text-align: center;
+          text-transform: none;
+          transition: color .13s ease-in-out,background .13s ease-in-out,opacity .13s ease-in-out,box-shadow .13s ease-in-out;
+          user-select: none;
+          -webkit-user-select: none;
+          touch-action: manipulation;
+        }
+
+        .button-22:active {
+          background-color: #006AE8;
+        }
+
+        .button-22:hover {
+          background-color: #1C84FF;
+        }
+    </style>
+
+    <div class="container">
+        {%if error%}
+        <div style="color:red">{{ error|linebreaks  }}</div>
+        {%endif%}
+        {%if success%}
+        <div style="color:green">{{ success|linebreaks  }}</div>
+        {%endif%}
+        <h1>Загрузка товаров</h1>
+        <hr>
+        <h3>Загрузка с Excel</h3>
+        <form action="/api/v1/import" method="post" enctype='multipart/form-data'>
+        {% csrf_token %}
+        <label for="images" class="drop-container" id="dropcontainer">
+          <span class="drop-title">Drop files here</span>
+          or
+          <input type="file" name="excel" id="images" accept=".xlsx,.xls" required>
+        </label>
+
+        <button class="button-22" role="button" type="submit">Загрузить</button>
+        </form>
+        <br />
+        <br />
+        <p style="color: orangered">ВАЖНО!!!
+            <br />Файл загружается в формате <b>xls</b> или <b>xlsx</b>. Первая строка таблицы - заголовок. Данные товаров начинаются
+            со 2-ой строки. Поля Город и Характеристики можно указать через запятую, как на примере.</p>
+
+        <a href="/media/documents/user_data.xlsx" download style="text-decoration: underline">Скачать пример файла</a>
+
+
+    </div>
+
+    <script>
+        const dropContainer = document.getElementById("dropcontainer")
+      const fileInput = document.getElementById("images")
+
+      dropContainer.addEventListener("dragover", (e) => {
+        // prevent default to allow drop
+        e.preventDefault()
+      }, false)
+
+      dropContainer.addEventListener("dragenter", () => {
+        dropContainer.classList.add("drag-active")
+      })
+
+      dropContainer.addEventListener("dragleave", () => {
+        dropContainer.classList.remove("drag-active")
+      })
+
+      dropContainer.addEventListener("drop", (e) => {
+        e.preventDefault()
+        dropContainer.classList.remove("drag-active")
+        fileInput.files = e.dataTransfer.files
+      })
+    </script>
+
+{% endblock %}
