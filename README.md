@@ -11,6 +11,3 @@
 
 ### 3) Run server:
 `python manage.py runserver`
-
-### Data base schema:
-https://drive.google.com/file/d/1zt5Wduh1f22k3q2k5-YRx3iikb2-YxLQ/view?usp=sharing
